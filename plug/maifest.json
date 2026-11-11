@@ -1,0 +1,7 @@
+{
+  "name": "Test Plugin Dvv",
+  "description": "Plugin buat ngetes doang.",
+  "author": "DvvXI",
+  "version": "1.0.0",
+  "main": "index.js"
+}
