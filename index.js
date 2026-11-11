@@ -3,7 +3,6 @@
 
     const React = metro.common.React;
     const ReactNative = metro.common.ReactNative;
-    const { FormInput, FormRow, FormDivider } = metro.common.components || metro.findByProps("FormInput", "FormRow", "FormDivider");
 
     let targetId = null;
     let unpatches = [];
@@ -14,36 +13,38 @@
         const applySpoof = () => {
             targetId = inputId;
             if (ReactNative.Alert) {
-                ReactNative.Alert.alert("DvvXI", "Target set to: " + targetId + "\nNow open Custom Profile UI!");
+                ReactNative.Alert.alert("DvvXI", "Target set to: " + targetId);
             }
         };
 
         const clearSpoof = () => {
             targetId = null;
             if (ReactNative.Alert) {
-                ReactNative.Alert.alert("DvvXI", "Spoof Cleared. You are back to your account.");
+                ReactNative.Alert.alert("DvvXI", "Spoof Cleared.");
             }
         };
 
-        if (!FormInput) return React.createElement(ReactNative.Text, { style: { color: "white", padding: 20 } }, "UI not found.");
-
-        return React.createElement(ReactNative.ScrollView, { style: { padding: 15, backgroundColor: "#1e1e1e" } },
-            React.createElement(FormRow, { label: "Target User ID to Edit" }),
-            React.createElement(FormInput, {
-                placeholder: "Enter Target ID",
+        return React.createElement(ReactNative.View, { style: { padding: 20, backgroundColor: "#1e1e1e", flex: 1 } },
+            React.createElement(ReactNative.Text, { style: { color: "white", fontSize: 18, fontWeight: "bold", marginBottom: 15 } }, "DvvXI Spoofer"),
+            
+            React.createElement(ReactNative.Text, { style: { color: "#ccc", marginBottom: 5 } }, "Target User ID:"),
+            React.createElement(ReactNative.TextInput, {
+                style: { backgroundColor: "#333", color: "white", padding: 10, borderRadius: 5, marginBottom: 20 },
+                placeholder: "Enter ID here...",
+                placeholderTextColor: "#888",
                 value: inputId,
-                onChange: setInputId,
+                onChangeText: setInputId,
                 keyboardType: "numeric"
             }),
-            React.createElement(FormDivider, null),
+            
             React.createElement(ReactNative.Button, {
-                title: "1. Apply Spoof (To Edit)",
+                title: "1. Apply Spoof",
                 color: "#4CAF50",
                 onPress: applySpoof
             }),
-            React.createElement(ReactNative.View, { style: { marginTop: 10 } }),
+            React.createElement(ReactNative.View, { style: { marginTop: 15 } }),
             React.createElement(ReactNative.Button, {
-                title: "2. Clear Spoof (Back to Normal)",
+                title: "2. Clear Spoof",
                 color: "#f44336",
                 onPress: clearSpoof
             })
@@ -101,14 +102,11 @@
             };
             unpatches.push(() => { AvatarModule.getUserAvatarURL = origAvatar; });
         }
-
-        console.log("[DvvXI] Final Inception Spoofer Loaded!");
     }
 
     function onUnload() {
         unpatches.forEach(fn => fn());
         unpatches = [];
-        console.log("[DvvXI] Unloaded.");
     }
 
     module.onLoad = onLoad;
