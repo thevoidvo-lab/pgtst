@@ -1,0 +1,7 @@
+{
+  "name": "Test Plugin Dvv",
+  "description": "Plugin for test.",
+  "author": "DvvXI",
+  "version": "1.0.0",
+  "main": "test-plugin.js"
+}
