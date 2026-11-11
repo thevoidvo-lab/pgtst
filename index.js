@@ -1,38 +1,28 @@
 (function (module, metro) {
     "use strict";
 
-    function onLoad() {
-        try {
-            if (typeof bunny !== "undefined" && bunny.api && bunny.api.commands && bunny.api.commands.registerCommand) {
-                bunny.api.commands.registerCommand({
-                    name: "testcmd",
-                    description: "Test command",
-                    options: [],
-                    execute: function() {
-                        return { content: "SUCCESS: bunny command works!" };
+    var pluginObj = {
+        start: function () {
+            try {
+                if (typeof bunny !== "undefined" && bunny.plugin && bunny.plugin.logger) {
+                    bunny.plugin.logger.info("BUNNY KEYS: " + Object.keys(bunny).join(", "));
+                    if (bunny.api) {
+                        bunny.plugin.logger.info("BUNNY.API KEYS: " + Object.keys(bunny.api).join(", "));
+                        if (bunny.api.commands) {
+                            bunny.plugin.logger.info("BUNNY.API.COMMANDS KEYS: " + Object.keys(bunny.api.commands).join(", "));
+                        } else {
+                            bunny.plugin.logger.info("BUNNY.API.COMMANDS IS UNDEFINED");
+                        }
+                    } else {
+                        bunny.plugin.logger.info("BUNNY.API IS UNDEFINED");
                     }
-                });
-            }
-        } catch (e) {}
+                }
+            } catch (e) {}
+        },
+        stop: function () {}
+    };
 
-        try {
-            if (typeof vendetta !== "undefined" && vendetta.commands && vendetta.commands.registerCommand) {
-                vendetta.commands.registerCommand({
-                    name: "testcmd",
-                    description: "Test command",
-                    options: [],
-                    execute: function() {
-                        return { content: "SUCCESS: vendetta command works!" };
-                    }
-                });
-            }
-        } catch (e) {}
-    }
-
-    function onUnload() {
-    }
-
-    module.onLoad = onLoad;
-    module.onUnload = onUnload;
+    module.exports = pluginObj;
+    module.default = pluginObj;
 
 })({}, vendetta.metro);
