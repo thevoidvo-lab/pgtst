@@ -2,19 +2,22 @@
     "use strict";
 
     function onLoad() {
-        console.log("[DvvXI] Test Plugin loaded successfully!");
+        console.log("=== DVVXI PLUGIN LOADED ===");
         
         try {
-            if (ui && ui.showToast) {
-                ui.showToast("DvvXI Test Plugin is active!");
+            const { Alert } = metro.common.ReactNative;
+            if (Alert) {
+                Alert.alert("DvvXI Plugin", "Plugin is working!");
+            } else {
+                console.log("Alert module not found.");
             }
         } catch (e) {
-            console.log("[DvvXI] Failed to show toast:", e);
+            console.log("Failed to show alert:", e);
         }
     }
 
     function onUnload() {
-        console.log("[DvvXI] Test Plugin unloaded.");
+        console.log("=== DVVXI PLUGIN UNLOADED ===");
     }
 
     module.onLoad = onLoad;
