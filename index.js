@@ -131,3 +131,4 @@
     module.settings = SettingsPage;
 
 })({}, vendetta.metro, vendetta.metro.common, vendetta.plugin, vendetta.ui, vendetta.storage);
+
