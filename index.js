@@ -1,18 +1,22 @@
-module.exports = {
-    id: "test-plugin-dvv",
-    name: "Test Plugin Dvv",
-    description: "Plugin for testihg.",
-    author: "DvvXI",
-    version: "1.0.0",
-    start() {
-        // hi
-        if (window.Vencord && window.Vencord.UI && window.Vencord.UI.showToast) {
-            window.Vencord.UI.showToast("Plugin Dvv Run");
-        } else {
-            console.log("[DvvXI] Plugin Runn (But Toast Not Supported)");
+(function (module, metro, common, plugin, ui, storage) {
+    "use strict";
+
+    function onLoad() {
+        console.log("[DvvXI] Test Plugin loaded successfully!");
+        
+        try {
+            if (ui && ui.showToast) {
+                ui.showToast("DvvXI Test Plugin is active!");
+            }
+        } catch (e) {
+            console.log("[DvvXI] Failed to show toast:", e);
         }
-    },
-    stop() {
-        console.log("[DvvXI] Plugin died");
     }
-};
+
+    function onUnload() {
+        console.log("[DvvXI] Test Plugin unloaded.");
+    }
+
+    module.onLoad = onLoad;
+    module.onUnload = onUnload;
+})({}, vendetta.metro, vendetta.metro.common, vendetta.plugin, vendetta.ui, vendetta.storage);
