@@ -1,13 +1,1 @@
-{
-  "name": "DvvXI Test",
-  "description": "Test apakah plugin jalan di chat",
-  "authors": [
-    {
-      "name": "DvvXI",
-      "id": "1248518999923228722"
-    }
-  ],
-  "version": "1.0.0",
-  "main": "index.js",
-  "hash": "33cc734585b212b94afe8eb6f004e0fe6d4c43c840241f6fba61f4ebca7696c5"
-}
+{"name":"DvvXI Test","description":"Test apakah plugin jalan","authors":[{"name":"DvvXI","id":"1248518999923228722"}],"main":"index.js","vendetta":{"icon":"ic_full_server_gating_24px"},"hash":"f7ec59e28728c0da05b10887442ec1b31b145df12cb949f9db726743223dfaa2"}
