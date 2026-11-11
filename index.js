@@ -2,49 +2,23 @@
     "use strict";
 
     module.default = {
-        id: "dvvxi-spoofer",
-        name: "DvvXI Spoofer",
-        description: "Spoof CustomProfile ID",
+        id: "dvvxi-debug",
+        name: "DvvXI Debug",
+        description: "Check API availability",
         authors: [{ name: "DvvXI", id: "1248518999923228722" }],
         version: "1.0.0",
-        
+
         onLoad() {
-            const CPStore = vendetta.metro.findByProps("getProfileDataFor", "accountData", "saveAccount");
-            let targetId = null;
-
-            if (CPStore && CPStore.myId) {
-                const origMyId = CPStore.myId;
-                CPStore.myId = function () {
-                    if (targetId) return targetId;
-                    return origMyId.apply(this, arguments);
-                };
-            }
-
-            this.unregisterCmd = vendetta.commands.registerCommand({
-                name: "setid",
-                displayName: "setid",
-                description: "Set target ID for CustomProfile",
-                displayDescription: "Set target ID for CustomProfile",
-                applicationId: "-1",
-                inputType: 1,
-                type: 1,
-                execute: () => {
-                    if (vendetta.ui && vendetta.ui.alerts && vendetta.ui.alerts.showConfirmationAlert) {
-                        vendetta.ui.alerts.showConfirmationAlert({
-                            title: "DvvXI Spoofer",
-                            content: "Fitur input teks belum siap. Gunakan hardcode dulu.",
-                            confirmText: "OK",
-                            onConfirm: () => {}
-                        });
-                    }
-                }
-            });
+            console.log("[DvvXI] --- DEBUG START ---");
+            console.log("[DvvXI] typeof vendetta:", typeof vendetta);
+            console.log("[DvvXI] typeof vendetta.commands:", typeof vendetta?.commands);
+            console.log("[DvvXI] typeof registerCommand:", typeof vendetta?.commands?.registerCommand);
+            console.log("[DvvXI] typeof vendetta.metro:", typeof vendetta?.metro);
+            console.log("[DvvXI] typeof vendetta.ui:", typeof vendetta?.ui);
+            console.log("[DvvXI] --- DEBUG END ---");
         },
 
         onUnload() {
-            if (this.unregisterCmd) {
-                this.unregisterCmd();
-            }
             console.log("[DvvXI] Unloaded");
         }
     };
