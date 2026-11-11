@@ -1,63 +1,52 @@
 (function (module, metro) {
     "use strict";
 
-    const { commands } = vendetta;
-    const { findByProps } = metro;
     let targetId = null;
     let unpatches = [];
+    const { findByProps } = metro;
 
     function onLoad() {
-        if (commands && commands.registerCommand) {
-            const patchSetId = commands.registerCommand({
-                name: "setid",
-                description: "Spoof CustomProfile to target User ID",
-                inputType: 1,
-                type: 1,
-                applicationId: "-1",
-                options: [
-                    {
-                        type: 3,
-                        required: true,
-                        name: "id",
-                        description: "Target User ID"
-                    }
-                ],
-                execute: (args) => {
-                    const idArg = args.find(a => a.name === "id");
-                    if (idArg && idArg.value) {
-                        targetId = idArg.value;
-                        const Messages = findByProps("sendMessage", "receiveMessage");
-                        if (Messages) {
-                            Messages.sendMessage("currentChannel", {
-                                content: `Target ID set to: ${targetId}. Open Custom Profile now!`,
-                                _command_output: true
+        const Messages = findByProps("sendMessage", "receiveMessage");
+        
+        if (Messages && Messages.sendMessage) {
+            const originalSend = Messages.sendMessage;
+            
+            Messages.sendMessage = function(channelId, message, ...args) {
+                if (message && message.content) {
+                    const content = message.content.trim();
+
+                    if (content.startsWith("/setid ")) {
+                        const id = content.split(" ")[1];
+                        if (id && !isNaN(id)) {
+                            targetId = id;
+                            Messages.receiveMessage(channelId, {
+                                id: String(Date.now()),
+                                channel_id: channelId,
+                                author: { id: "0", username: "DvvXI", avatar: null },
+                                content: `Target ID set to: ${targetId}\nOpen Custom Profile now!`,
+                                timestamp: new Date().toISOString(),
+                                type: 0
                             });
                         }
+                        return;
                     }
-                }
-            });
-            if (typeof patchSetId === 'function') unpatches.push(patchSetId);
-        }
 
-        if (commands && commands.registerCommand) {
-            const patchClearId = commands.registerCommand({
-                name: "clearid",
-                description: "Clear the spoofed User ID",
-                inputType: 1,
-                type: 1,
-                applicationId: "-1",
-                execute: () => {
-                    targetId = null;
-                    const Messages = findByProps("sendMessage", "receiveMessage");
-                    if (Messages) {
-                        Messages.sendMessage("currentChannel", {
-                            content: `Target ID cleared. Back to your account.`,
-                            _command_output: true
+                    if (content === "/clearid") {
+                        targetId = null;
+                        Messages.receiveMessage(channelId, {
+                            id: String(Date.now()),
+                            channel_id: channelId,
+                            author: { id: "0", username: "DvvXI", avatar: null },
+                            content: `Target ID cleared. Back to normal.`,
+                            timestamp: new Date().toISOString(),
+                            type: 0
                         });
+                        return;
                     }
                 }
-            });
-            if (typeof patchClearId === 'function') unpatches.push(patchClearId);
+                return originalSend.apply(this, arguments);
+            };
+            unpatches.push(() => { Messages.sendMessage = originalSend; });
         }
 
         const CPStore = metro.findByProps("getProfileDataFor", "accountData", "saveAccount");
