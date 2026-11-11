@@ -1,6 +1,9 @@
 (function (module, vendetta) {
     "use strict";
 
+    const { metro } = vendetta;
+    const CommandAPI = metro.findByProps("registerCommand", "registeredCommandCount");
+
     module.default = {
         id: "dvvxi-spoofer",
         name: "DvvXI Spoofer",
@@ -9,7 +12,7 @@
         version: "1.0.0",
 
         onLoad() {
-            const CPStore = vendetta.metro.findByProps("getProfileDataFor", "accountData", "saveAccount");
+            const CPStore = metro.findByProps("getProfileDataFor", "accountData", "saveAccount");
             let targetId = null;
 
             if (CPStore && CPStore.myId) {
@@ -20,37 +23,34 @@
                 };
             }
 
-            this.unregisterCmd = vendetta.commands.registerCommand({
-                name: "setid",
-                displayName: "setid",
-                description: "Set custom ID for profile",
-                applicationId: "-1",
-                inputType: 1,
-                type: 1,
-                execute: () => {
-                    if (vendetta.ui && vendetta.ui.alerts && vendetta.ui.alerts.showInputAlert) {
-                        vendetta.ui.alerts.showInputAlert({
-                            title: "DvvXI Spoofer",
-                            placeholder: "Enter Target User ID",
-                            confirmText: "Save",
-                            onConfirm: (value) => {
-                                if (value && !isNaN(value)) {
-                                    targetId = value;
-                                    console.log("[DvvXI] Target set to: " + targetId);
+            if (CommandAPI && CommandAPI.registerCommand) {
+                this.unregisterCmd = CommandAPI.registerCommand({
+                    name: "setid",
+                    description: "Set custom ID for profile",
+                    execute: (args, ctx) => {
+                        const Dialogs = metro.findByProps("prompt", "choose", "showText");
+                        if (Dialogs && Dialogs.prompt) {
+                            Dialogs.prompt({
+                                title: "DvvXI Spoofer",
+                                description: "Enter Target User ID",
+                                placeholder: "e.g. 758142443937333249",
+                                confirm: "Save",
+                                onSubmit: (value) => {
+                                    if (value && !isNaN(value)) {
+                                        targetId = value;
+                                    }
                                 }
-                            }
-                        });
-                    } else {
-                        console.log("[DvvXI] showInputAlert not found");
+                            });
+                        }
                     }
-                    return null;
-                }
-            });
+                });
+            } else {
+                console.log("[DvvXI] Command API not found.");
+            }
         },
 
         onUnload() {
             if (this.unregisterCmd) this.unregisterCmd();
-            console.log("[DvvXI] Unloaded");
         }
     };
 })({}, vendetta);
