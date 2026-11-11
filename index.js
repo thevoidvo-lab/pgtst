@@ -1,70 +1,53 @@
-(function (module, vendetta) {
-    "use strict";
+var unregisterCommand = null;
 
-    const { metro, patcher, ui } = vendetta;
-    const Messages = metro.findByProps("sendMessage", "receiveMessage");
-    
-    module.default = {
-        id: "dvvxi-spoofer",
-        name: "DvvXI Spoofer",
-        description: "Spoof CustomProfile ID via chat command",
-        authors: [{ name: "DvvXI", id: "1248518999923228722" }],
-        version: "1.0.0",
+var plugin = {
+    start() {
+        const register = bunny?.api?.commands?.registerCommand;
 
-        onLoad() {
-            const CPStore = metro.findByProps("getProfileDataFor", "accountData", "saveAccount");
-            let targetId = null;
+        if (typeof register !== "function") {
+            throw new Error("bunny.api.commands.registerCommand is unavailable");
+        }
 
-            if (CPStore && CPStore.myId) {
-                const origMyId = CPStore.myId;
-                CPStore.myId = function () {
-                    if (targetId) return targetId;
-                    return origMyId.apply(this, arguments);
-                };
-            }
-
-            if (Messages && Messages.sendMessage && patcher) {
-                this.unpatch = patcher.instead("sendMessage", Messages, (args, original) => {
-                    const [channelId, message] = args;
-                    
-                    if (message && typeof message.content === "string") {
-                        const content = message.content.trim();
-                        
-                        if (content.startsWith(".setid")) {
-                            const id = content.split(" ")[1];
-                            
-                            if (id && !isNaN(id)) {
-                                targetId = id;
-                                Messages.sendBotMessage(channelId, `Target ID diubah ke: ${targetId}. Buka Custom Profile sekarang!`);
-                            } else {
-                                const Dialogs = metro.findByProps("prompt", "choose", "showText");
-                                if (Dialogs && Dialogs.prompt) {
-                                    Dialogs.prompt({
-                                        title: "DvvXI Spoofer",
-                                        description: "Enter Target User ID",
-                                        placeholder: "e.g. 758142443937333249",
-                                        confirm: "Save",
-                                        onSubmit: (value) => {
-                                            if (value && !isNaN(value)) {
-                                                targetId = value;
-                                                Messages.sendBotMessage(channelId, `Target ID diubah ke: ${targetId}`);
-                                            }
-                                        }
-                                    });
+        unregisterCommand = register({
+            name: "testcmd",
+            description: "Test custom command - prompt lalu balikin teks",
+            options: [],
+            execute: async (args, ctx) => {
+                return new Promise((resolve) => {
+                    try {
+                        const { prompt } = bunny.api?.ui?.dialogs || {};
+                        if (typeof prompt === "function") {
+                            prompt({
+                                title: "Test Command",
+                                description: "Masukin teks yang mau ditampilin di chat",
+                                placeholder: "Tulis sesuatu...",
+                                confirm: "Kirim",
+                                onSubmit: (value) => {
+                                    resolve({ content: "**[TestCmd]** " + value });
                                 }
-                            }
-                            return; 
+                            });
+                            return;
                         }
+                    } catch (err) {
+                        console.error("[TestCmd] prompt failed:", err);
                     }
-                    
-                    return original.apply(this, args);
+
+                    const value = window.prompt("Masukin teks:", "");
+                    if (value !== null && value.trim() !== "") {
+                        resolve({ content: "**[TestCmd]** " + value });
+                    } else {
+                        resolve({ content: "**[TestCmd]** (dibatalkan)" });
+                    }
                 });
             }
-        },
+        });
+    },
 
-        onUnload() {
-            if (this.unpatch) this.unpatch();
+    stop() {
+        if (typeof unregisterCommand === "function") {
+            unregisterCommand();
+            unregisterCommand = null;
         }
-    };
-})({}, vendetta);
+    }
+};
 
