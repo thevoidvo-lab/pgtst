@@ -1,7 +1,13 @@
 {
-  "name": "Test Plugin Dvv",
-  "description": "Plugin for test.",
-  "author": "DvvXI",
+  "name": "DvvXI Test Plugin",
+  "description": "hi",
+  "authors": [
+    {
+      "name": "DvvXI",
+      "id": "1248518999923228722"
+    }
+  ],
   "version": "1.0.0",
-  "main": "index.js"
+  "main": "index.js",
+  "hash": "98290a8df25a76d11db42701843f23dfaaf1cf55139abcf48f4fe9e2b63dfcda"
 }
