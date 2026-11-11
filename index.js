@@ -1,57 +1,38 @@
 (function (module, metro) {
     "use strict";
 
-    let targetId = null;
-    let unpatches = [];
-    const { instead } = vendetta.patcher;
-    const { findByProps } = metro;
+    module.default = {
+        id: "dvvxi-spoofer",
+        name: "DvvXI Spoofer",
+        description: "Spoof CustomProfile ID",
+        authors: [{ name: "DvvXI", id: "1248518999923228722" }],
+        version: "1.0.0",
+        
+        settings: {
+            targetId: {
+                type: "string",
+                label: "Target User ID",
+                description: "Enter target ID here",
+                default: ""
+            }
+        },
 
-    function onLoad() {
-        const Messages = findByProps("sendMessage", "receiveMessage");
+        onLoad() {
+            const CPStore = metro.findByProps("getProfileDataFor", "accountData", "saveAccount");
+            if (!CPStore || !CPStore.myId) return;
 
-        if (Messages && Messages.sendMessage) {
-            unpatches.push(
-                instead("sendMessage", Messages, (args, original) => {
-                    const [channelId, message] = args;
-                    if (message && typeof message.content === "string") {
-                        const content = message.content.trim();
-
-                        if (content.startsWith("/setid ")) {
-                            const id = content.split(" ")[1];
-                            if (id && !isNaN(id)) {
-                                targetId = id;
-                                Messages.sendBotMessage(channelId, `Target ID Spoofed to: ${targetId}\nNow open Custom Profile!`);
-                                return; 
-                            }
-                        }
-
-                        if (content === "/clearid") {
-                            targetId = null;
-                            Messages.sendBotMessage(channelId, `Spoof cleared. Back to normal.`);
-                            return;
-                        }
-                    }
-                    return original.apply(this, args);
-                })
-            );
-        }
-
-        const CPStore = metro.findByProps("getProfileDataFor", "accountData", "saveAccount");
-        if (CPStore && CPStore.myId) {
             const origMyId = CPStore.myId;
-            CPStore.myId = function() {
-                if (targetId) return targetId;
+            
+            CPStore.myId = function () {
+                if (module.default.settings && module.default.settings.targetId) {
+                    return module.default.settings.targetId;
+                }
                 return origMyId.apply(this, arguments);
             };
-            unpatches.push(() => { CPStore.myId = origMyId; });
+        },
+
+        onUnload() {
+            console.log("[DvvXI] Unloaded");
         }
-    }
-
-    function onUnload() {
-        unpatches.forEach(fn => fn());
-        unpatches = [];
-    }
-
-    module.onLoad = onLoad;
-    module.onUnload = onUnload;
+    };
 })({}, vendetta.metro);
