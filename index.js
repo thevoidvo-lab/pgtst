@@ -1,29 +1,56 @@
-const plugin = {
+var unregister = null;
+var unpatch = null;
+
+var plugin = {
     start() {
-        const register = bunny?.api?.commands?.registerCommand;
+        if (unregister) unregister();
+        if (unpatch) unpatch();
+        unregister = null;
+        unpatch = null;
 
-        if (typeof register !== "function") {
-            throw new Error("[TestCmd] bunny.api.commands.registerCommand tidak ditemukan");
-        }
+        try {
+            unregister = bunny.api.commands.registerCommand({
+                name: "testcmd",
+                description: "Run the test command",
+                options: [],
+                execute: function() {
+                    return { content: "testcmd ran successfully!" };
+                }
+            });
+        } catch (e) {
+            console.error("Command registration failed; installing sendMessage fallback", e);
 
-        this._unregister = register({
-            name: "testcmd",
-            description: "Test command - harusnya muncul di autocomplete",
-            options: [],
-            execute: async () => {
-                return {
-                    content: "SUCCESS: External command is working!"
-                };
+            var messageUtil = vendetta.metro.findByProps("sendMessage");
+            if (!messageUtil || typeof messageUtil.sendMessage !== "function") {
+                console.error("Could not find sendMessage for the testcmd fallback");
+                return;
             }
-        });
+
+            unpatch = vendetta.patcher.instead(
+                "sendMessage",
+                messageUtil,
+                function(args, original) {
+                    var content = args[1] && typeof args[1].content === "string"
+                        ? args[1].content.trim()
+                        : "";
+
+                    if (content === "/testcmd" || content === ".testcmd") {
+                        return original.apply(this, [
+                            args[0],
+                            { content: "Fallback: testcmd ran successfully!" }
+                        ]);
+                    }
+
+                    return original.apply(this, args);
+                }
+            );
+        }
     },
 
     stop() {
-        if (typeof this._unregister === "function") {
-            this._unregister();
-            this._unregister = null;
-        }
+        if (unregister) unregister();
+        if (unpatch) unpatch();
+        unregister = null;
+        unpatch = null;
     }
 };
-
-plugin;
