@@ -7,7 +7,7 @@ module.exports = {
     start() {
         // hi
         if (window.Vencord && window.Vencord.UI && window.Vencord.UI.showToast) {
-            window.Vencord.UI.showToast("Plugin Dvv Berhasil Jalan!");
+            window.Vencord.UI.showToast("Plugin Dvv Run");
         } else {
             console.log("[DvvXI] Plugin Runn (But Toast Not Supported)");
         }
