@@ -1,1 +1,1 @@
-{"name":"DvvXI Spoofer","description":"Spoof CustomProfile ID","authors":[{"name":"DvvXI","id":"1248518999923228722"}],"main":"index.js","vendetta":{"icon":"ic_full_server_gating_24px"},"hash":"0a46e1d5c9eb30c30fca569713b1d2c69123d143bfd8465c8f11d4346fb49ec4"}
+{"name":"Test Plugin Dvv","description":"Plugin for test.","author":"DvvXI","version":"1.0.0","main":"test-plugin.js","hash":"aa95a772ce6bc994724243e28f31ab18b07059fe0e4b7ec3c064d3321e72ce3d"}
