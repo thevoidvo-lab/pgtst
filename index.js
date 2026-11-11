@@ -27,6 +27,9 @@
                 this.unregisterCmd = CommandAPI.registerCommand({
                     name: "setid",
                     description: "Set custom ID for profile",
+                    options: [],
+                    type: 1,
+                    inputType: 0,
                     execute: (args, ctx) => {
                         const Dialogs = metro.findByProps("prompt", "choose", "showText");
                         if (Dialogs && Dialogs.prompt) {
@@ -42,10 +45,9 @@
                                 }
                             });
                         }
+                        return { content: "" };
                     }
                 });
-            } else {
-                console.log("[DvvXI] Command API not found.");
             }
         },
 
