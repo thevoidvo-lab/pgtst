@@ -20,3 +20,4 @@
     module.onLoad = onLoad;
     module.onUnload = onUnload;
 })({}, vendetta.metro, vendetta.metro.common, vendetta.plugin, vendetta.ui, vendetta.storage);
+
