@@ -116,4 +116,3 @@
     module.settings = SettingsUI;
 
 })({}, vendetta.metro);
-
