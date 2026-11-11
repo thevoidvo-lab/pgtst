@@ -3,50 +3,37 @@
 
     let targetId = null;
     let unpatches = [];
+    const { instead } = vendetta.patcher;
     const { findByProps } = metro;
 
     function onLoad() {
         const Messages = findByProps("sendMessage", "receiveMessage");
-        
+
         if (Messages && Messages.sendMessage) {
-            const originalSend = Messages.sendMessage;
-            
-            Messages.sendMessage = function(channelId, message, ...args) {
-                if (message && message.content) {
-                    const content = message.content.trim();
+            unpatches.push(
+                instead("sendMessage", Messages, (args, original) => {
+                    const [channelId, message] = args;
+                    if (message && typeof message.content === "string") {
+                        const content = message.content.trim();
 
-                    if (content.startsWith("/setid ")) {
-                        const id = content.split(" ")[1];
-                        if (id && !isNaN(id)) {
-                            targetId = id;
-                            Messages.receiveMessage(channelId, {
-                                id: String(Date.now()),
-                                channel_id: channelId,
-                                author: { id: "0", username: "DvvXI", avatar: null },
-                                content: `Target ID set to: ${targetId}\nOpen Custom Profile now!`,
-                                timestamp: new Date().toISOString(),
-                                type: 0
-                            });
+                        if (content.startsWith("/setid ")) {
+                            const id = content.split(" ")[1];
+                            if (id && !isNaN(id)) {
+                                targetId = id;
+                                Messages.sendBotMessage(channelId, `Target ID Spoofed to: ${targetId}\nNow open Custom Profile!`);
+                                return; 
+                            }
                         }
-                        return;
-                    }
 
-                    if (content === "/clearid") {
-                        targetId = null;
-                        Messages.receiveMessage(channelId, {
-                            id: String(Date.now()),
-                            channel_id: channelId,
-                            author: { id: "0", username: "DvvXI", avatar: null },
-                            content: `Target ID cleared. Back to normal.`,
-                            timestamp: new Date().toISOString(),
-                            type: 0
-                        });
-                        return;
+                        if (content === "/clearid") {
+                            targetId = null;
+                            Messages.sendBotMessage(channelId, `Spoof cleared. Back to normal.`);
+                            return;
+                        }
                     }
-                }
-                return originalSend.apply(this, arguments);
-            };
-            unpatches.push(() => { Messages.sendMessage = originalSend; });
+                    return original.apply(this, args);
+                })
+            );
         }
 
         const CPStore = metro.findByProps("getProfileDataFor", "accountData", "saveAccount");
