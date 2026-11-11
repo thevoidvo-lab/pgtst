@@ -1,6 +1,6 @@
 {
-  "name": "DvvXI Spoofer",
-  "description": "Spoof People id's then use custom profile plugin to make their custom profile",
+  "name": "DvvXI Test",
+  "description": "Test apakah plugin jalan di chat",
   "authors": [
     {
       "name": "DvvXI",
@@ -9,5 +9,5 @@
   ],
   "version": "1.0.0",
   "main": "index.js",
-  "hash": "fd6bdea8cb48cea80c558815cea01ee6a90715b8d83976ece90a4a514c810983"
+  "hash": "6270e2319f7af409e08b3d740d41ac834c49f07cb20900f9131761f5df51285e"
 }
