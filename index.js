@@ -3,53 +3,57 @@ var unpatch = null;
 
 var plugin = {
     start() {
-        if (unregister) unregister();
-        if (unpatch) unpatch();
+        if (unregister) try { unregister(); } catch(e) {}
+        if (unpatch) try { unpatch(); } catch(e) {}
         unregister = null;
         unpatch = null;
 
+        var registered = false;
+
         try {
-            unregister = bunny.api.commands.registerCommand({
-                name: "testcmd",
-                description: "Run the test command",
-                options: [],
-                execute: function() {
-                    return { content: "testcmd ran successfully!" };
-                }
-            });
-        } catch (e) {
-            console.error("Command registration failed; installing sendMessage fallback", e);
-
-            var messageUtil = vendetta.metro.findByProps("sendMessage");
-            if (!messageUtil || typeof messageUtil.sendMessage !== "function") {
-                console.error("Could not find sendMessage for the testcmd fallback");
-                return;
-            }
-
-            unpatch = vendetta.patcher.instead(
-                "sendMessage",
-                messageUtil,
-                function(args, original) {
-                    var content = args[1] && typeof args[1].content === "string"
-                        ? args[1].content.trim()
-                        : "";
-
-                    if (content === "/testcmd" || content === ".testcmd") {
-                        return original.apply(this, [
-                            args[0],
-                            { content: "Fallback: testcmd ran successfully!" }
-                        ]);
+            if (typeof bunny !== "undefined" && bunny.api && bunny.api.commands && typeof bunny.api.commands.registerCommand === "function") {
+                unregister = bunny.api.commands.registerCommand({
+                    name: "testcmd",
+                    description: "Run the test command",
+                    options: [],
+                    execute: function() {
+                        return { content: "SUCCESS: bunny command works!" };
                     }
+                });
+                registered = true;
+            }
+        } catch (e) {}
 
-                    return original.apply(this, args);
+        try {
+            if (typeof vendetta !== "undefined" && vendetta.metro && vendetta.patcher) {
+                var messageUtil = vendetta.metro.findByProps("sendMessage");
+                if (messageUtil && typeof messageUtil.sendMessage === "function") {
+                    unpatch = vendetta.patcher.instead(
+                        "sendMessage",
+                        messageUtil,
+                        function(args, original) {
+                            var content = args[1] && typeof args[1].content === "string"
+                                ? args[1].content.trim()
+                                : "";
+
+                            if (content === "/testcmd" || content === ".testcmd") {
+                                return original.apply(this, [
+                                    args[0],
+                                    { content: "SUCCESS: vendetta fallback works!" }
+                                ]);
+                            }
+
+                            return original.apply(this, args);
+                        }
+                    );
                 }
-            );
-        }
+            }
+        } catch (e) {}
     },
 
     stop() {
-        if (unregister) unregister();
-        if (unpatch) unpatch();
+        if (unregister) try { unregister(); } catch(e) {}
+        if (unpatch) try { unpatch(); } catch(e) {}
         unregister = null;
         unpatch = null;
     }
