@@ -10,6 +10,4 @@
     module.onLoad = onLoad;
     module.onUnload = onUnload;
 
-    return module;
-
 })({}, vendetta.metro);
