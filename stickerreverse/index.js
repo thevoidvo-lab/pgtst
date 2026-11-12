@@ -1,0 +1,6 @@
+(function(module,vendetta){"use strict";var origJsx=null,origJsxs=null,jsxMod=null;function isStickerList(props){if(!props||!Array.isArray(props.data)||props.data.length===0)return false;var f=props.data[0];if(!f||typeof f!=="object")return false;var keys=["sticker_id","stickerId","asset","format_type","formatType","sticker"];for(var i=0;i<keys.length;i++){if(f[keys[i]]!==undefined)return true;}
+return false;}
+function makeNew(orig,type,props,key){if(props&&isStickerList(props)){var np=Object.assign({},props,{data:props.data.slice().reverse()});return orig.call(this,type,np,key);}
+return orig.call(this,type,props,key);}
+var plugin={onLoad:function(){try{jsxMod=vendetta.metro.findByProps("jsx","jsxs");if(!jsxMod){var all=vendetta.metro.findAll(function(m){return m&&typeof m.jsx==="function"&&typeof m.jsxs==="function";});if(all.length)jsxMod=all[0];}
+if(jsxMod&&typeof jsxMod.jsx==="function"){origJsx=jsxMod.jsx;origJsxs=jsxMod.jsxs;jsxMod.jsx=function(type,props,key){return makeNew.call(this,origJsx,type,props,key);};if(typeof origJsxs==="function"){jsxMod.jsxs=function(type,props,key){return makeNew.call(this,origJsxs,type,props,key);};}}}catch(e){}},onUnload:function(){if(jsxMod){if(origJsx)jsxMod.jsx=origJsx;if(origJsxs)jsxMod.jsxs=origJsxs;}}};return module.default=plugin;})({},vendetta);
