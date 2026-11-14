@@ -1,1 +1,14 @@
-{"name":"Tprt","description":"hi","authors":[{"name":"DvvXI","id":"1248518999923228722"}],"main":"src/index.ts","vendetta":{"icon":"ic_full_server_gating_24px"}}
+{
+    "name": "TestImport",
+    "description": "test ts import",
+    "authors": [
+        {
+            "name": "DvvXI",
+            "id": "1248518999923228722"
+        }
+    ],
+    "main": "src/index.ts",
+    "vendetta": {
+        "icon": "ic_full_server_gating_24px"
+    }
+}
