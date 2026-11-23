@@ -1,1 +1,20 @@
-{"name":"Hideserver","description":"hi","authors":[{"name":"DvvXI","id":"1248518999923228722"}],"main":"index.js","vendetta":{"icon":"ic_full_server_gating_24px"},"hash":"1eec22a431b7b0d220f01bf46c5940c8e0b776314c5fdc502cd9fadf2b70d6cd"}
+{
+	"format": 1,
+	"id": "bleelblep.hide-servers-drawer",
+	"name": "Hide Servers",
+	"description": "Locally hide servers — or entire folders — from your server list. The stock bar does the hiding itself, so folders, unread badges and drag-to-reorder all behave exactly as stock.",
+	"author": "bleelblep, blerp",
+	"icon": "EyeSlashIcon",
+	"version": "1.6.1",
+	"dependencies": {
+		"revenge.api": {
+			"version": ">=1 <2"
+		},
+		"discord": {
+			"version": "*"
+		}
+	},
+	"dist": {
+		"script": "index.js"
+	}
+}
